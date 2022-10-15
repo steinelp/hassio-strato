@@ -1,9 +1,0 @@
-{
-  "domain": "strato",
-  "name": "STRATO DynHost",
-  "documentation": "https://github.com/steinelp/hassio-strato/blob/master/README.md",
-  "issue_tracker": "https://github.com/steinelp/hassio-strato/issues",
-  "codeowners": ["@steinelp"],
-  "iot_class": "cloud_polling",
-  "version": "1.0.0"
-}
