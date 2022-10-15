@@ -80,7 +80,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 async def _update_STRATO(session, domain, user, password):
     """Update STRATO."""
     try:
-        myip = await session.get(f"https://v6.ident.me/")
+        myip = await session.get(f"https://api6.ipify.org/")
         url = f"https://{user}:{password}@{HOST}?hostname={domain}&myip={myip}"
         async with async_timeout.timeout(TIMEOUT):
             resp = await session.get(url)
