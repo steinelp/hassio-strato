@@ -1,8 +1,8 @@
-# OVH DynHost Updater Component for Home Assistant
+# Strato DDNS Updater Component for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
-With the `ovh` integration you can keep your current IP address in sync with your [OVH DynHost](https://docs.ovh.com/ie/en/domains/hosting_dynhost/)  hostname or domain.  
+With the `strato` integration you can keep your current IP address in sync with your [STRATO DDNS](https://www.strato.de/faq/hosting/so-einfach-richten-sie-dyndns-fuer-ihre-domains-ein/)  hostname or domain.  
 
 To use the integration in your installation, add the following to your `configuration.yaml` file:
 
@@ -17,7 +17,7 @@ To use the integration in your installation, add the following to your `configur
 #### Basic Example:
 
 ```yaml
-ovh:
+strato:
   domain: subdomain.domain.com
   username: YOUR_USERNAME
   password: YOUR_PASSWORD
