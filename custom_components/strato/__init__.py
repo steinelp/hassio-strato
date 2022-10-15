@@ -77,9 +77,6 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     return True
 
 
-
-
-
 async def _update_STRATO(session, domain, user, password):
     """Update STRATO."""
     try:
