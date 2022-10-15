@@ -1,4 +1,4 @@
-"""Integrate with OVH Dynamic DNS service."""
+"""Integrate with Strato DNS service."""
 import asyncio
 from datetime import timedelta
 import logging
@@ -21,14 +21,14 @@ from homeassistant.helpers.typing import ConfigType
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = "ovh"
+DOMAIN = "strato"
 
 DEFAULT_INTERVAL = timedelta(minutes=15)
 
 TIMEOUT = 30
-HOST = "www.ovh.com/nic/update"
+HOST = "dyndns.strato.com/nic/update"
 
-OVH_ERRORS = {
+STRATO_ERRORS = {
     "nohost": "Hostname supplied does not exist under specified account",
     "badauth": "Invalid username password combination",
     "badagent": "Client disabled",
@@ -54,7 +54,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Initialize the OVH component."""
+    """Initialize the STRATO component."""
     conf = config[DOMAIN]
     domain = conf.get(CONF_DOMAIN).strip()
     user = conf.get(CONF_USERNAME).strip()
@@ -63,39 +63,40 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     session = async_get_clientsession(hass)
 
-    result = await _update_ovh(session, domain, user, password)
+    result = await _update_STRATO(session, domain, user, password)
 
     if not result:
         return False
 
     async def update_domain_interval(now):
-        """Update the OVH entry."""
-        await _update_ovh(session, domain, user, password)
+        """Update the STRATO entry."""
+        await _update_STRATO(session, domain, user, password)
 
     async_track_time_interval(hass, update_domain_interval, interval)
 
     return True
 
 
-async def _update_ovh(session, domain, user, password):
-    """Update OVH."""
+async def _update_STRATO(session, domain, user, password):
+    """Update STRATO."""
     try:
-        url = f"https://{user}:{password}@{HOST}?system=dyndns&hostname={domain}"
+        myip = await session.get(f"https://v6.ident.me/")
+        url = f"https://{user}:{password}@{HOST}?hostname={domain}&myip={myip}"
         async with async_timeout.timeout(TIMEOUT):
             resp = await session.get(url)
             body = await resp.text()
 
             if body.startswith("good") or body.startswith("nochg"):
-                _LOGGER.info("Updating OVH for domain: %s", domain)
+                _LOGGER.info("Updating STRATO for domain: %s", domain)
 
                 return True
 
-            _LOGGER.warning("Updating OVH failed: %s => %s", domain, OVH_ERRORS[body.strip()])
+            _LOGGER.warning("Updating STRATO failed: %s => %s", domain, STRATO_ERRORS[body.strip()])
 
     except aiohttp.ClientError:
-        _LOGGER.warning("Can't connect to OVH API")
+        _LOGGER.warning("Can't connect to STRATO API")
 
     except asyncio.TimeoutError:
-        _LOGGER.warning("Timeout from OVH API for domain: %s", domain)
+        _LOGGER.warning("Timeout from STRATO API for domain: %s", domain)
 
     return False
